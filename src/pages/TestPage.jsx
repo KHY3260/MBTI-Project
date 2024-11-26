@@ -28,8 +28,8 @@ const TestPage = ({ user, setTestResult }) => {
   const handleTestSubmit = async (answers) => {
     try {
       const mbtiResult = calculateMBTI(answers);
-      setResult(mbtiResult);
-      setTestResult(mbtiResult);
+      setResult(result);
+      setTestResult(result);
 
       if (user) {
         await createTestResult({ userId: user.id, result: mbtiResult });
