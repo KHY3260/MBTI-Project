@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getTestResults, deleteTestResult } from "../api/testResult";
+import {
+  getTestResults,
+  deleteTestResult,
+  updateTestResultVisibility,
+} from "../api/TestResult";
 
 const Container = styled.div`
   max-width: 800px;
@@ -14,20 +18,17 @@ const Title = styled.h1`
   text-align: center;
 `;
 
-const ResultList = styled.div`
-  margin-top: 20px;
-`;
-
 const ResultCard = styled.div`
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
+  background-color: #1e293b;
+  color: #e2e8f0;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
 const Button = styled.button`
-  background-color: ${(props) => (props.primary ? "#007bff" : "#dc3545")};
+  background-color: ${(props) => (props.primary ? "#2563eb" : "#d97706")};
   color: white;
   border: none;
   border-radius: 5px;
@@ -36,7 +37,7 @@ const Button = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: ${(props) => (props.primary ? "#0056b3" : "#a71d2a")};
+    background-color: ${(props) => (props.primary ? "#1d4ed8" : "#c2410c")};
   }
 `;
 
@@ -47,7 +48,6 @@ const TestResult = () => {
     const fetchResults = async () => {
       try {
         const data = await getTestResults();
-        console.log(data);
         setResults(data);
       } catch (error) {
         console.error("결과를 가져오는 중 오류 발생:", error);
@@ -63,34 +63,47 @@ const TestResult = () => {
       setResults((prevResults) =>
         prevResults.filter((result) => result.id !== id)
       );
-      alert("결과가 삭제되었습니다.");
     } catch (error) {
       console.error("결과 삭제 중 오류 발생:", error);
     }
   };
-  console.log(results);
+
+  const handleToggleVisibility = async (id, visibility) => {
+    try {
+      await updateTestResultVisibility(id, !visibility);
+      setResults((prevResults) =>
+        prevResults.map((result) =>
+          result.id === id ? { ...result, visibility: !visibility } : result
+        )
+      );
+    } catch (error) {
+      console.error("공개/비공개 전환 중 오류 발생:", error);
+    }
+  };
+
   return (
     <Container>
       <Title>모든 테스트 결과</Title>
-      <ResultList>
-        {results.map((result) => (
-          <ResultCard key={result.id}>
-            <p>
-              <strong>사용자 ID:</strong> {result.nickname}
-            </p>
-            <p>
-              <strong>MBTI 결과:</strong> {result.result}
-            </p>
+      {results.map((result) => (
+        <ResultCard key={result.id}>
+          <h2>{result.nickname}님의 결과</h2>
+          <p>
+            <strong>MBTI 유형:</strong> {result.result}
+          </p>
+          <p>{result.description}</p>
+          <div>
             <Button
               primary
-              onClick={() => alert("결과를 비공개로 설정했습니다.")}
+              onClick={() =>
+                handleToggleVisibility(result.id, result.visibility)
+              }
             >
-              비공개로 전환
+              {result.visibility ? "비공개로 전환" : "공개로 전환"}
             </Button>
             <Button onClick={() => handleDelete(result.id)}>삭제</Button>
-          </ResultCard>
-        ))}
-      </ResultList>
+          </div>
+        </ResultCard>
+      ))}
     </Container>
   );
 };
