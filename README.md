@@ -26,6 +26,7 @@ Axios
 --프로젝트 구조--
 
 src/
+
 ├── components/      
 ├── pages/          
 ├── api/             
