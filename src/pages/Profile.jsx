@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { getUserProfile, updateProfile } from "../api/auth";
 import styled from "styled-components";
+import { updateProfile } from "../api/auth";
 
 const Container = styled.div`
   max-width: 400px;
@@ -45,26 +45,17 @@ const FeedbackMessage = styled.p`
   color: ${({ $success }) => ($success ? "green" : "red")};
 `;
 
-const Profile = ({ setUser }) => {
+const Profile = () => {
   const [nickname, setNickname] = useState("");
   const [feedback, setFeedback] = useState({ message: "", success: false });
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const userData = await getUserProfile();
-        setNickname(userData.nickname || "");
-      } catch (error) {
-        setFeedback({
-          message:
-            error.response?.data?.message ||
-            "회원정보를 가져오는 중 오류가 발생했습니다.",
-          success: false,
-        });
-      }
-    };
-
-    fetchUserProfile();
+    const userData = JSON.parse(localStorage.getItem("user"));
+    if (userData) {
+      setNickname(userData.nickname || "");
+    } else {
+      console.log("로그인 정보가 없습니다.");
+    }
   }, []);
 
   const handleNicknameChange = (e) => {
@@ -75,17 +66,14 @@ const Profile = ({ setUser }) => {
     e.preventDefault();
     try {
       const updatedUser = await updateProfile(null, nickname);
-      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
       setFeedback({
         message: "프로필이 성공적으로 업데이트되었습니다!",
         success: true,
       });
     } catch (error) {
-      console.log(error);
       setFeedback({
-        message:
-          error.response?.data?.message ||
-          "프로필 업데이트 중 오류가 발생했습니다.",
+        message: error.message || "프로필 업데이트 중 오류가 발생했습니다.",
         success: false,
       });
     }

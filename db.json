@@ -1,3 +1,9 @@
 {
-  "users": []
+  "users": [],
+  "testResults": [
+    {
+      "id": "c1b8",
+      "result": "ISTJ"
+    }
+  ]
 }

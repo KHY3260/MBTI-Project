@@ -1,36 +1,24 @@
-import axios from "./axiosInstance";
+import axios from "axios";
 
-const API_URL = "https://moneyfulpublicpolicy.co.kr/testResults";
+const API_URL = "http://localhost:4000/testResults";
 
-export const createTestResult = async ({ userId, result }) => {
+export const getTestResults = async () => {
   try {
-    const response = await axios.post(API_URL, { userId, result });
+    const response = await axios.get(API_URL);
     return response.data;
   } catch (error) {
-    throw error.response?.data || "테스트 결과 생성 중 오류가 발생했습니다.";
+    console.error("모든 테스트 결과를 가져오는 중 오류 발생:", error);
+    throw error;
   }
 };
 
-export const getTestResultsByUserId = async (userId) => {
+export const createTestResult = async (resultData) => {
   try {
-    const response = await axios.get(`${API_URL}?userId=${userId}`);
+    const response = await axios.post(API_URL, resultData);
     return response.data;
   } catch (error) {
-    throw (
-      error.response?.data ||
-      "사용자의 테스트 결과를 가져오는 중 오류가 발생했습니다."
-    );
-  }
-};
-
-export const updateTestResult = async (id, updatedResult) => {
-  try {
-    const response = await axios.patch(`${API_URL}/${id}`, updatedResult);
-    return response.data;
-  } catch (error) {
-    throw (
-      error.response?.data || "테스트 결과 업데이트 중 오류가 발생했습니다."
-    );
+    console.error("테스트 결과 생성 중 오류 발생:", error);
+    throw error;
   }
 };
 
@@ -39,6 +27,17 @@ export const deleteTestResult = async (id) => {
     const response = await axios.delete(`${API_URL}/${id}`);
     return response.data;
   } catch (error) {
-    throw error.response?.data || "테스트 결과 삭제 중 오류가 발생했습니다.";
+    console.error("테스트 결과 삭제 중 오류 발생:", error);
+    throw error;
+  }
+};
+
+export const updateTestResultVisibility = async (id, visibility) => {
+  try {
+    const response = await axios.patch(`${API_URL}/${id}`, { visibility });
+    return response.data;
+  } catch (error) {
+    console.error("테스트 결과 공개 여부 업데이트 중 오류 발생:", error);
+    throw error;
   }
 };

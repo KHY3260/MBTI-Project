@@ -1,5 +1,6 @@
-import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
@@ -9,23 +10,34 @@ import TestResult from "./pages/TestResult";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  const [testResult, setTestResult] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+
+  const handleLogin = (token) => {
+    localStorage.setItem("token", token);
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+  };
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route
+          element={<Layout isLoggedIn={isLoggedIn} onLogout={handleLogout} />}
+        >
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/signup" element={<SignUp />} />
 
-        <Route element={<ProtectedRoute />}>
-          <Route
-            path="/test"
-            element={<TestPage user={user} setTestResult={setTestResult} />}
-          />
-          <Route path="/results" element={<TestResult result={testResult} />} />
-          <Route path="/profile" element={<Profile setUser={setUser} />} />
+          <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
+            <Route path="/test" element={<TestPage />} />
+            <Route path="/results" element={<TestResult />} />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
         </Route>
       </Routes>
     </Router>

@@ -1,9 +1,8 @@
-import { useState } from "react";
-import TestForm from "../components/TestForm";
+import { useNavigate } from "react-router-dom";
 import { calculateMBTI } from "../utils/mbtiCalculator";
 import { createTestResult } from "../api/testResult";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import TestForm from "../components/TestForm";
 
 const Container = styled.div`
   display: flex;
@@ -21,24 +20,23 @@ const Title = styled.h1`
   margin-bottom: 24px;
 `;
 
-const TestPage = ({ user, setTestResult }) => {
+const TestPage = () => {
   const navigate = useNavigate();
-  const [result, setResult] = useState(null);
 
   const handleTestSubmit = async (answers) => {
-    try {
-      const mbtiResult = calculateMBTI(answers);
-      setResult(result);
-      setTestResult(result);
+    const mbtiResult = calculateMBTI(answers);
+    localStorage.setItem("testResult", JSON.stringify(mbtiResult));
 
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
       if (user) {
         await createTestResult({ userId: user.id, result: mbtiResult });
       }
-
-      navigate("/results", { state: { result: mbtiResult } });
     } catch (error) {
-      console.error("테스트 결과 저장 실패...ㅠㅠ:", error);
+      console.error("결과 저장 실패:", error);
     }
+
+    navigate("/results");
   };
 
   return (

@@ -34,14 +34,14 @@ const SignupLink = styled.p`
   }
 `;
 
-const Login = ({ setUser }) => {
+const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (formData) => {
     try {
       const user = await login(formData);
-      setUser(user);
+      localStorage.setItem("user", JSON.stringify(user));
       navigate("/");
     } catch (err) {
       setError(`로그인에 실패했습니다. 에러 내용: ${err.message}`);
