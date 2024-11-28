@@ -1,6 +1,6 @@
 import { useState } from "react";
-import AuthForm from "../components/AuthForm";
 import { login } from "../api/auth";
+import AuthForm from "../components/AuthForm";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
 

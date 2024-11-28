@@ -1,18 +1,18 @@
 import { useState } from "react";
 import styled from "styled-components";
 
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  margin: auto;
-`;
-
 const Input = styled.input`
   margin-bottom: 10px;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin: auto;
 `;
 
 const Button = styled.button`
